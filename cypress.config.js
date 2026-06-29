@@ -1,19 +1,15 @@
+// Apagamos la GPU desde el entorno para que Electron no colapse en GitHub Actions
+process.env.ELECTRON_EXTRA_LAUNCH_ARGS = '--disable-gpu';
+
 const { defineConfig } = require('cypress');
 
 module.exports = defineConfig({
   e2e: {
     baseUrl: 'http://localhost:3000/',
+    experimentalMemoryManagement: true,
     numTestsKeptInMemory: 0,
     setupNodeEvents(on, config) {
-      on('before:browser:launch', (browser = {}, launchOptions) => {
-        if (browser.name === 'electron') {
-          // Apaga la aceleración gráfica para evitar el crash en GitHub Actions
-          launchOptions.args.push('--disable-gpu');
-          // Optimiza el uso de la memoria RAM del servidor
-          launchOptions.args.push('--disable-dev-shm-usage');
-        }
-        return launchOptions;
-      });
+      // Dejamos esto vacío para evitar el warning de opciones no soportadas
     },
   },
 });
